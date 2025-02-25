@@ -2,6 +2,8 @@ name: Build GKI - Release
 
 on:
   workflow_dispatch:
+  push:
+    branches: ["main"]
 
 jobs:
   build:
@@ -22,11 +24,15 @@ jobs:
         with:
           submodules: "true"
           fetch-depth: 1
+      - name: Set Swap Space
+        uses: pierotofy/set-swap-space@v1.0
+        with:
+          swap-size-gb: 8   
       - name: Setup build environment
         run: |
           # Install require dependencies
           sudo apt update -y
-          sudo apt install bc binutils-dev bison build-essential ccache curl flex git libelf-dev lld make python3-dev zlib1g-dev cpio python-is-python3 tar perl wget lz4 unzip llvm -y
+          sudo apt install bc binutils-dev bison build-essential ccache curl flex git libelf-dev lld llvm make python3-dev cpio python-is-python3 tar perl wget lz4 unzip -y
           git clone https://github.com/bachnxuan/AnyKernel3.git AnyKernel3
           cd AnyKernel3 && rm -rf .git .github && cd ..
       - name: Setup ccache
@@ -42,9 +48,9 @@ jobs:
           git clone $AOSP_MIRROR/platform/system/tools/mkbootimg -b $BRANCH --depth 1 mkbootimg
           # git clone --depth 1 https://github.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r416183b clang-tc
           mkdir clang-tc
-          wget https://github.com/ZyCromerZ/Clang/releases/download/20.0.0git-20250129-release/Clang-20.0.0git-20250129.tar.gz
-          tar -xvzf Clang-20.0.0git-20250129.tar.gz
-          rm -rf Clang-20.0.0git-20250129.tar.gz
+          wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/a92c8229e4d69f3552cdcd956e3f2b0380a41931/clang-r547379.tar.gz
+          tar -xvzf clang-r547379.tar.gz
+          rm -rf clang-r547379.tar.gz
       - name: Set boot sign key
         env:
           BOOT_SIGN_KEY: ${{ secrets.BOOT_SIGN_KEY }}
