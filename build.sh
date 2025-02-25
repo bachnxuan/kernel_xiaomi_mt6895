@@ -25,11 +25,11 @@ DEFCONFIG="bomb_defconfig"
 export ARCH=arm64
 export SUBARCH=$ARCH
 export KBUILD_BUILD_USER=bachnxuan
-LLVM_CONFIG=" AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip"
+LLVM_CONFIG="LLVM=1 LLVM_IAS=1 AR=llvm-ar NM=llvm-nm OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump STRIP=llvm-strip"
 DATE_START=$(date +"%s")
 
-make $THREAD CC="ccache clang" CXX="ccache clang++" LLVM=1 LLVM_IAS=1 $DEFCONFIG O=out
-make $THREAD CC="ccache clang" CXX="ccache clang++" LLVM=1 LLVM_IAS=1 \
+make $THREAD CC="ccache clang" CXX="ccache clang++" $LLVM_CONFIG $DEFCONFIG O=out
+make $THREAD CC="ccache clang" CXX="ccache clang++" $LLVM_CONFIG \
     LTO=thin O=out 2>&1 | tee kernel.log
 
 DATE_END=$(date +"%s")
